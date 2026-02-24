@@ -15,6 +15,27 @@ func TestList(t *testing.T) {
 		require.Nil(t, l.Back())
 	})
 
+	t.Run("empty after delete", func(t *testing.T) {
+		l := NewList()
+		e := l.PushFront(5)
+		l.Remove(e)
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Front())
+		require.Nil(t, l.Back())
+		e = l.PushFront(5)
+		l.Remove(e)
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Front())
+		require.Nil(t, l.Back())
+	})
+
+	t.Run("one element both front and bach", func(t *testing.T) {
+		l := NewList()
+		e := l.PushFront(5)
+		require.Equal(t, e, l.Front())
+		require.Equal(t, e, l.Back())
+	})
+
 	t.Run("complex", func(t *testing.T) {
 		l := NewList()
 
@@ -41,6 +62,7 @@ func TestList(t *testing.T) {
 
 		l.MoveToFront(l.Front()) // [80, 60, 40, 10, 30, 50, 70]
 		l.MoveToFront(l.Back())  // [70, 80, 60, 40, 10, 30, 50]
+		require.NotNil(t, l.Back())
 
 		elems := make([]int, 0, l.Len())
 		for i := l.Front(); i != nil; i = i.Next {
