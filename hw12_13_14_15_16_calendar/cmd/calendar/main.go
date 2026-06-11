@@ -8,10 +8,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_16_calendar/internal/app"
-	"github.com/fixme_my_friend/hw12_13_14_15_16_calendar/internal/logger"
-	internalhttp "github.com/fixme_my_friend/hw12_13_14_15_16_calendar/internal/server/http"
-	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_16_calendar/internal/storage/memory"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/app"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
+	internalhttp "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/server/http"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
+	memorystorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/memory"
+	sqlstorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/sql"
 )
 
 var configFile string
@@ -28,11 +30,35 @@ func main() {
 		return
 	}
 
-	config := NewConfig()
+	config, err := NewConfig(configFile)
+	if err != nil {
+		panic(err)
+	}
+
 	logg := logger.New(config.Logger.Level)
 
-	storage := memorystorage.New()
-	calendar := app.New(logg, storage)
+	var eventStorage storage.Storage
+	switch config.Storage.Type {
+	case "memory":
+		eventStorage = memorystorage.New()
+	case "sql":
+		sqlStorage, err := sqlstorage.New(config.Storage.Database)
+		if err != nil {
+			logg.Error("failed to connect to database: " + err.Error())
+			os.Exit(1)
+		}
+		eventStorage = sqlStorage
+		defer func() {
+			if err := sqlStorage.Close(context.Background()); err != nil {
+				logg.Error("failed to close database: " + err.Error())
+			}
+		}()
+	default:
+		logg.Error("unknown storage type: " + config.Storage.Type)
+		panic("unknown storage type: " + config.Storage.Type)
+	}
+
+	calendar := app.New(logg, eventStorage)
 
 	server := internalhttp.NewServer(logg, calendar)
 
@@ -53,7 +79,7 @@ func main() {
 
 	logg.Info("calendar is running...")
 
-	if err := server.Start(ctx); err != nil {
+	if err := server.Start(ctx, config.Server.Host, config.Server.Port); err != nil {
 		logg.Error("failed to start http server: " + err.Error())
 		cancel()
 		os.Exit(1) //nolint:gocritic

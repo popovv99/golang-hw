@@ -1,20 +1,20 @@
 package main
 
-// При желании конфигурацию можно вынести в internal/config.
-// Организация конфига в main принуждает нас сужать API компонентов, использовать
-// при их конструировании только необходимые параметры, а также уменьшает вероятность циклической зависимости.
-type Config struct {
-	Logger LoggerConf
-	// TODO
-}
+import (
+	"os"
 
-type LoggerConf struct {
-	Level string
-	// TODO
-}
+	"github.com/BurntSushi/toml"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/config"
+)
 
-func NewConfig() Config {
-	return Config{}
-}
+func NewConfig(configFile string) (config.Config, error) {
+	var cfg config.Config
 
-// TODO
+	data, err := os.ReadFile(configFile)
+	if err != nil {
+		return cfg, err
+	}
+
+	err = toml.Unmarshal(data, &cfg)
+	return cfg, err
+}
