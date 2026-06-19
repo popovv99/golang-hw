@@ -1,5 +1,17 @@
 [logger]
-level = "INFO"
+level = "info"
 
-# TODO
-# ...
+[storage]
+type = "sql"
+
+[storage.database]
+host = "finbirg4"
+port = "5432"
+user = "postgres"
+password = "postgres"
+name = "qdfais"
+schema = "hwgocalendar"
+
+[server]
+host = "localhost"
+port = "8080"

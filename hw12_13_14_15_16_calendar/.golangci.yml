@@ -1,0 +1,38 @@
+linters:
+  disable-all: true
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - gocyclo
+    - dupl
+    - goconst
+    - gocritic
+    - goimports
+    - misspell
+    - unconvert
+    - prealloc
+    - copyloopvar
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
