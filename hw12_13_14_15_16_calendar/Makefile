@@ -30,7 +30,7 @@ generate:
 	oapi-codegen -config api/config.yaml api/openapi.yaml > internal/server/http/api/api.gen.go
 
 install-lint-deps:
-	(which golangci-lint > /dev/null) || go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	(which golangci-lint > /dev/null) || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.12.2
 
 lint: install-lint-deps
 	golangci-lint run ./...
