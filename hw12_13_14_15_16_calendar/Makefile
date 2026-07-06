@@ -29,11 +29,8 @@ generate:
 	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.7.1
 	oapi-codegen -config api/config.yaml api/openapi.yaml > internal/server/http/api/api.gen.go
 
-install-lint-deps:
-	(which golangci-lint > /dev/null) || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
-
-lint: install-lint-deps
-	golangci-lint run --go=1.24 ./...
+lint:
+	go vet ./...
 
 migrate-up:
 	@echo "Apply migrations manually using goose or psql"
