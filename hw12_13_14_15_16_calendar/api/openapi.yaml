@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: Calendar API
+  description: REST API для сервиса календаря
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /events:
+    post:
+      summary: Создать событие
+      operationId: createEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '201':
+          description: Событие успешно создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Некорректные данные или дата занята
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/{id}:
+    put:
+      summary: Обновить событие
+      operationId: updateEvent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '200':
+          description: Событие успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Некорректные данные или дата занята
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Удалить событие
+      operationId: deleteEvent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Событие успешно удалено
+        '404':
+          description: Событие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/day:
+    get:
+      summary: Получить список событий на день
+      operationId: listEventsDay
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Дата в формате RFC3339
+      responses:
+        '200':
+          description: Список событий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Некорректная дата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/week:
+    get:
+      summary: Получить список событий на неделю
+      operationId: listEventsWeek
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Дата начала недели в формате RFC3339
+      responses:
+        '200':
+          description: Список событий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Некорректная дата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/month:
+    get:
+      summary: Получить список событий на месяц
+      operationId: listEventsMonth
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Дата начала месяца в формате RFC3339
+      responses:
+        '200':
+          description: Список событий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Некорректная дата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    EventRequest:
+      type: object
+      required:
+        - title
+        - date
+        - end_date
+        - user_id
+      properties:
+        title:
+          type: string
+          description: Заголовок события
+        date:
+          type: string
+          format: date-time
+          description: Дата и время начала события (RFC3339)
+        end_date:
+          type: string
+          format: date-time
+          description: Дата и время окончания события (RFC3339)
+        description:
+          type: string
+          description: Описание события (опционально)
+        user_id:
+          type: string
+          format: uuid
+          description: ID пользователя - владельца события (UUID)
+        notify_before:
+          type: string
+          description: 'За сколько времени высылать уведомление в Go duration format (опционально). Примеры: "24h", "30m", "1h30m"'
+          example: "24h"
+
+    EventResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор события
+        title:
+          type: string
+          description: Заголовок события
+        date:
+          type: string
+          format: date-time
+          description: Дата и время начала события (RFC3339)
+        end_date:
+          type: string
+          format: date-time
+          description: Дата и время окончания события (RFC3339)
+        description:
+          type: string
+          description: Описание события
+        user_id:
+          type: string
+          format: uuid
+          description: ID пользователя - владельца события (UUID)
+        notify_before:
+          type: string
+          description: За сколько времени высылать уведомление (duration format)
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Описание ошибки
+        code:
+          type: string
+          description: Код ошибки
