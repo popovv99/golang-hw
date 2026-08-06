@@ -1,0 +1,6 @@
+package: api
+output: internal/server/http/api/api.gen.go
+generate:
+  models: true
+  chi-server: true
+  strict-server: true

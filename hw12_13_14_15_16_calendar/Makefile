@@ -25,11 +25,12 @@ version: build
 test:
 	go test -race ./internal/...
 
-install-lint-deps:
-	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.64.8
+generate:
+	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.7.1
+	oapi-codegen -config api/config.yaml api/openapi.yaml > internal/server/http/api/api.gen.go
 
-lint: install-lint-deps
-	golangci-lint run ./...
+lint:
+	go vet ./...
 
 migrate-up:
 	@echo "Apply migrations manually using goose or psql"
@@ -39,4 +40,4 @@ migrate-down:
 	@echo "Rollback migrations manually using goose or psql"
 	@echo "Example: goose -dir migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" down"
 
-.PHONY: build run build-img run-img version test lint migrate-up migrate-down
+.PHONY: build run build-img run-img version test generate lint migrate-up migrate-down

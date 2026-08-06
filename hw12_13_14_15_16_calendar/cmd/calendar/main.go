@@ -10,7 +10,7 @@ import (
 
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/app"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
-	internalhttp "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/server/http"
+	httpserver "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/server/http"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
 	memorystorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/memory"
 	sqlstorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/sql"
@@ -60,7 +60,7 @@ func main() {
 
 	calendar := app.New(logg, eventStorage)
 
-	server := internalhttp.NewServer(logg, calendar)
+	server := httpserver.NewServer(logg, calendar)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
