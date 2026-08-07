@@ -10,13 +10,15 @@ import (
 )
 
 type Storage struct {
-	mu     sync.RWMutex
-	events map[string]storage.Event
+	mu           sync.RWMutex
+	events       map[string]storage.Event
+	notifications map[string]storage.Notification
 }
 
 func New() *Storage {
 	return &Storage{
-		events: make(map[string]storage.Event),
+		events:        make(map[string]storage.Event),
+		notifications: make(map[string]storage.Notification),
 	}
 }
 
@@ -123,4 +125,46 @@ func (s *Storage) ListEventsMonth(ctx context.Context, startDate time.Time) ([]s
 
 func isTimeOverlap(start1, end1, start2, end2 time.Time) bool {
 	return start1.Before(end2) && start2.Before(end1)
+}
+
+func (s *Storage) ListEventsForNotification(ctx context.Context, now time.Time) ([]storage.Event, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	var result []storage.Event
+	for _, event := range s.events {
+		if event.NotifyBefore > 0 &&
+			!event.Date.Before(now) &&
+			!event.Date.Add(-event.NotifyBefore).After(now) {
+			result = append(result, event)
+		}
+	}
+
+	return result, nil
+}
+
+func (s *Storage) DeleteOldEvents(ctx context.Context, before time.Time) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for id, event := range s.events {
+		if event.EndDate.Before(before) {
+			delete(s.events, id)
+		}
+	}
+
+	return nil
+}
+
+func (s *Storage) CreateNotification(ctx context.Context, notification storage.Notification) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if notification.ID == "" {
+		notification.ID = uuid.New().String()
+	}
+	notification.CreatedAt = time.Now()
+
+	s.notifications[notification.ID] = notification
+	return nil
 }

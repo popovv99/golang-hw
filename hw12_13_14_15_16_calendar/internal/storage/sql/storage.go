@@ -24,6 +24,21 @@ const listEventsQuery = `
 	WHERE date >= $1 AND date < $2
 `
 
+const listEventsForNotificationQuery = `
+	SELECT id, title, date, end_date, description, user_id, notify_before
+	FROM events
+	WHERE notify_before > 0
+	  AND date - make_interval(0, 0, 0, 0, 0, 0, notify_before::double precision / 1e9) <= $1
+	  AND date > $1
+`
+
+const deleteOldEventsQuery = `DELETE FROM events WHERE end_date < $1`
+
+const createNotificationQuery = `
+	INSERT INTO notifications (id, event_id, title, date, user_id, created_at)
+	VALUES ($1, $2, $3, $4, $5, $6)
+`
+
 func mapExclusionErr(err error) error {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeExclusionViolation {
@@ -145,4 +160,29 @@ func (s *Storage) ListEventsMonth(ctx context.Context, startDate time.Time) ([]s
 	var events []storage.Event
 	err := s.db.SelectContext(ctx, &events, listEventsQuery, monthStart, monthEnd)
 	return events, err
+}
+
+func (s *Storage) ListEventsForNotification(ctx context.Context, now time.Time) ([]storage.Event, error) {
+	var events []storage.Event
+	err := s.db.SelectContext(ctx, &events, listEventsForNotificationQuery, now)
+	return events, err
+}
+
+func (s *Storage) DeleteOldEvents(ctx context.Context, before time.Time) error {
+	_, err := s.db.ExecContext(ctx, deleteOldEventsQuery, before)
+	return err
+}
+
+func (s *Storage) CreateNotification(ctx context.Context, notification storage.Notification) error {
+	if notification.ID == "" {
+		notification.ID = uuid.New().String()
+	}
+	if notification.CreatedAt.IsZero() {
+		notification.CreatedAt = time.Now()
+	}
+
+	_, err := s.db.ExecContext(ctx, createNotificationQuery,
+		notification.ID, notification.EventID, notification.Title,
+		notification.Date, notification.UserID, notification.CreatedAt)
+	return err
 }
