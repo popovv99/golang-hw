@@ -1,0 +1,8 @@
+bin/
+*.exe
+.git/
+.gitignore
+docs/
+deployments/
+test/
+*.md
