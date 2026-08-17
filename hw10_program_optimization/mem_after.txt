@@ -1,0 +1,39 @@
+File: hw10_program_optimization.test.exe
+Build ID: c:\temp\go-build366938616\b001\hw10_program_optimization.test.exe2026-08-17 13:54:00.4973077 +0700 +07
+Type: alloc_space
+Time: 2026-08-17 13:54:03 +07
+Showing nodes accounting for 426.77MB, 98.47% of 433.39MB total
+Dropped 41 nodes (cum <= 2.17MB)
+      flat  flat%   sum%        cum   cum%
+  217.50MB 50.19% 50.19%   217.50MB 50.19%  github.com/json-iterator/go.(*Iterator).ReadString
+  175.53MB 40.50% 90.69%   425.77MB 98.24%  github.com/popovv99/golang-hw/hw10_program_optimization.GetDomainStat
+      16MB  3.69% 94.38%       16MB  3.69%  strings.(*Builder).grow
+    8.24MB  1.90% 96.28%     8.24MB  1.90%  regexp.(*bitState).reset
+    7.50MB  1.73% 98.01%     7.50MB  1.73%  strings.genSplit
+       2MB  0.46% 98.47%     2.50MB  0.58%  runtime.allocm
+         0     0% 98.47%      230MB 53.07%  github.com/json-iterator/go.(*Iterator).ReadVal
+         0     0% 98.47%   231.01MB 53.30%  github.com/json-iterator/go.(*frozenConfig).Unmarshal
+         0     0% 98.47%      230MB 53.07%  github.com/json-iterator/go.(*generalStructDecoder).Decode
+         0     0% 98.47%      230MB 53.07%  github.com/json-iterator/go.(*generalStructDecoder).decodeOneField
+         0     0% 98.47%      111MB 25.61%  github.com/json-iterator/go.(*placeholderDecoder).Decode
+         0     0% 98.47%   143.50MB 33.11%  github.com/json-iterator/go.(*stringCodec).Decode
+         0     0% 98.47%   143.50MB 33.11%  github.com/json-iterator/go.(*structFieldDecoder).Decode
+         0     0% 98.47%   231.01MB 53.30%  github.com/json-iterator/go.Unmarshal (inline)
+         0     0% 98.47%   426.27MB 98.36%  github.com/popovv99/golang-hw/hw10_program_optimization.TestGetDomainStat_Time_And_Memory.func1
+         0     0% 98.47%     8.24MB  1.90%  regexp.(*Regexp).MatchString (inline)
+         0     0% 98.47%     8.24MB  1.90%  regexp.(*Regexp).backtrack
+         0     0% 98.47%     8.24MB  1.90%  regexp.(*Regexp).doExecute
+         0     0% 98.47%     8.24MB  1.90%  regexp.(*Regexp).doMatch (inline)
+         0     0% 98.47%     2.23MB  0.51%  runtime.main
+         0     0% 98.47%     2.50MB  0.58%  runtime.newm
+         0     0% 98.47%     2.50MB  0.58%  runtime.resetspinning
+         0     0% 98.47%     2.50MB  0.58%  runtime.schedule
+         0     0% 98.47%     2.50MB  0.58%  runtime.startm
+         0     0% 98.47%     2.50MB  0.58%  runtime.wakep
+         0     0% 98.47%     2.38MB  0.55%  runtime/pprof.profileWriter
+         0     0% 98.47%       16MB  3.69%  strings.(*Builder).Grow
+         0     0% 98.47%     7.50MB  1.73%  strings.SplitN (inline)
+         0     0% 98.47%       16MB  3.69%  strings.ToLower
+         0     0% 98.47%   391.75MB 90.39%  testing.(*B).launch
+         0     0% 98.47%    34.52MB  7.96%  testing.(*B).run1.func1
+         0     0% 98.47%   426.27MB 98.36%  testing.(*B).runN
