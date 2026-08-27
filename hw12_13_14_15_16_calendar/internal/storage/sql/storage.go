@@ -154,7 +154,7 @@ func (s *Storage) ListEventsWeek(ctx context.Context, startDate time.Time) ([]st
 
 func (s *Storage) ListEventsMonth(ctx context.Context, startDate time.Time) ([]storage.Event, error) {
 
-	monthStart := time.Date(startDate.Year(), startDate.Month(), 1, 0, 0, 0, 0, startDate.Location())
+	monthStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, startDate.Location())
 	monthEnd := monthStart.AddDate(0, 1, 0)
 
 	var events []storage.Event
