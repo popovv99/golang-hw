@@ -1,0 +1,84 @@
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.28s)
+    stats_optimization_test.go:46: time used: 560.0629ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"560062900" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.02s)
+    stats_optimization_test.go:46: time used: 514.5974ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"514597400" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.02s)
+    stats_optimization_test.go:46: time used: 512.5573ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"512557300" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.01s)
+    stats_optimization_test.go:46: time used: 506.068ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"506068000" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.09s)
+    stats_optimization_test.go:46: time used: 517.3644ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"517364400" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.05s)
+    stats_optimization_test.go:46: time used: 516.4147ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"516414700" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.01s)
+    stats_optimization_test.go:46: time used: 525.1376ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"525137600" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.86s)
+    stats_optimization_test.go:46: time used: 527.7879ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"527787900" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.77s)
+    stats_optimization_test.go:46: time used: 515.8829ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"515882900" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+--- FAIL: TestGetDomainStat_Time_And_Memory (14.10s)
+    stats_optimization_test.go:46: time used: 530.5833ms / 300ms
+    stats_optimization_test.go:47: memory used: 328Mb / 30Mb
+    assertion_compare.go:332: 
+        	Error Trace:	stats_optimization_test.go:49
+        	Error:      	"530583300" is not less than "300000000"
+        	Test:       	TestGetDomainStat_Time_And_Memory
+        	Messages:   	[the program is too slow]
+FAIL
+exit status 1
+FAIL	github.com/popovv99/golang-hw/hw10_program_optimization	142.350s
+FAIL

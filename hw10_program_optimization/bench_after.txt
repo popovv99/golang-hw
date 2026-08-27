@@ -1,0 +1,12 @@
+BenchmarkGetDomainStat-12    	      10	 100215910 ns/op	29151666 B/op	 1544364 allocs/op
+BenchmarkGetDomainStat-12    	      12	 100467658 ns/op	29150882 B/op	 1544362 allocs/op
+BenchmarkGetDomainStat-12    	      12	 101195017 ns/op	29154041 B/op	 1544363 allocs/op
+BenchmarkGetDomainStat-12    	      12	  99492667 ns/op	29141689 B/op	 1544362 allocs/op
+BenchmarkGetDomainStat-12    	      12	  99591825 ns/op	29163248 B/op	 1544363 allocs/op
+BenchmarkGetDomainStat-12    	      12	  99589625 ns/op	29147844 B/op	 1544362 allocs/op
+BenchmarkGetDomainStat-12    	      12	 100010833 ns/op	29135486 B/op	 1544361 allocs/op
+BenchmarkGetDomainStat-12    	      12	 100691308 ns/op	29147785 B/op	 1544362 allocs/op
+BenchmarkGetDomainStat-12    	      10	 100282640 ns/op	29118264 B/op	 1544360 allocs/op
+BenchmarkGetDomainStat-12    	      12	 100041900 ns/op	29154069 B/op	 1544363 allocs/op
+PASS
+ok  	github.com/popovv99/golang-hw/hw10_program_optimization	47.874s

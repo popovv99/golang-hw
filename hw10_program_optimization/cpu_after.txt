@@ -1,0 +1,135 @@
+File: hw10_program_optimization.test.exe
+Build ID: c:\temp\go-build366938616\b001\hw10_program_optimization.test.exe2026-08-17 13:54:00.4973077 +0700 +07
+Type: cpu
+Time: 2026-08-17 13:54:00 +07
+Duration: 3.13s, Total samples = 3.12s (99.57%)
+Showing nodes accounting for 2.83s, 90.71% of 3.12s total
+Dropped 86 nodes (cum <= 0.02s)
+      flat  flat%   sum%        cum   cum%
+     0.38s 12.18% 12.18%      0.62s 19.87%  compress/flate.(*decompressor).huffSym
+     0.29s  9.29% 21.47%      1.38s 44.23%  compress/flate.(*decompressor).huffmanBlock
+     0.21s  6.73% 28.21%      0.53s 16.99%  github.com/json-iterator/go.(*Iterator).ReadString
+     0.18s  5.77% 33.97%      0.18s  5.77%  runtime.cgocall
+     0.16s  5.13% 39.10%      0.33s 10.58%  bufio.(*Reader).ReadByte
+     0.16s  5.13% 44.23%      0.16s  5.13%  runtime.memmove
+     0.10s  3.21% 47.44%      0.16s  5.13%  runtime.mallocgcTiny
+     0.09s  2.88% 50.32%      0.15s  4.81%  compress/flate.(*dictDecoder).tryWriteCopy (inline)
+     0.09s  2.88% 53.21%      0.38s 12.18%  runtime.mallocgc
+     0.09s  2.88% 56.09%      0.26s  8.33%  runtime.mapaccess1_faststr
+     0.08s  2.56% 58.65%      0.08s  2.56%  aeshashbody
+     0.08s  2.56% 61.22%      0.08s  2.56%  compress/flate.(*dictDecoder).writeByte (inline)
+     0.06s  1.92% 63.14%      0.15s  4.81%  compress/flate.(*decompressor).moreBits
+     0.06s  1.92% 65.06%      0.06s  1.92%  runtime.stdcall2
+     0.05s  1.60% 66.67%      0.05s  1.60%  internal/runtime/maps.(*groupReference).key (inline)
+     0.05s  1.60% 68.27%      0.05s  1.60%  runtime.nextFreeFast (inline)
+     0.04s  1.28% 69.55%      0.93s 29.81%  github.com/json-iterator/go.(*generalStructDecoder).decodeOneField
+     0.04s  1.28% 70.83%      0.05s  1.60%  internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load
+     0.04s  1.28% 72.12%      0.04s  1.28%  runtime.stdcall1
+     0.04s  1.28% 73.40%      0.04s  1.28%  sync.(*Pool).Get
+     0.04s  1.28% 74.68%      0.05s  1.60%  sync.(*Pool).Put
+     0.03s  0.96% 75.64%      0.10s  3.21%  compress/flate.(*dictDecoder).writeCopy
+     0.03s  0.96% 76.60%      0.04s  1.28%  github.com/json-iterator/go.(*Iterator).nextToken
+     0.03s  0.96% 77.56%      0.03s  0.96%  internal/runtime/maps.ctrlGroup.matchH2 (inline)
+     0.03s  0.96% 78.53%      0.03s  0.96%  runtime.memclrNoHeapPointers
+     0.02s  0.64% 79.17%      0.36s 11.54%  github.com/json-iterator/go.(*structFieldDecoder).Decode
+     0.02s  0.64% 79.81%      0.02s  0.64%  runtime.ifaceeq
+     0.02s  0.64% 80.45%      0.06s  1.92%  runtime.mallocgcSmallScanNoHeader
+     0.02s  0.64% 81.09%      0.02s  0.64%  runtime.scanblock
+     0.02s  0.64% 81.73%      0.08s  2.56%  runtime.scanobject
+     0.02s  0.64% 82.37%      0.31s  9.94%  runtime.slicebytetostring
+     0.02s  0.64% 83.01%      0.02s  0.64%  runtime.stdcall0
+     0.02s  0.64% 83.65%      0.02s  0.64%  runtime.stdcall7
+     0.02s  0.64% 84.29%      0.09s  2.88%  strings.ToLower
+     0.01s  0.32% 84.62%      1.43s 45.83%  bufio.(*Scanner).Scan
+     0.01s  0.32% 84.94%      0.02s  0.64%  github.com/json-iterator/go.(*frozenConfig).ReturnIterator
+     0.01s  0.32% 85.26%      0.02s  0.64%  github.com/json-iterator/go.(*int64Codec).Decode
+     0.01s  0.32% 85.58%      0.27s  8.65%  github.com/json-iterator/go.(*placeholderDecoder).Decode
+     0.01s  0.32% 85.90%      1.06s 33.97%  github.com/json-iterator/go.Unmarshal (inline)
+     0.01s  0.32% 86.22%      0.02s  0.64%  internal/stringslite.Index
+     0.01s  0.32% 86.54%      0.13s  4.17%  regexp.(*Regexp).backtrack
+     0.01s  0.32% 86.86%      0.14s  4.49%  regexp.(*Regexp).doExecute
+     0.01s  0.32% 87.18%      0.03s  0.96%  regexp.(*bitState).reset
+     0.01s  0.32% 87.50%      0.22s  7.05%  runtime.gcDrain
+     0.01s  0.32% 87.82%      0.02s  0.64%  runtime.lock2.osyield.func1
+     0.01s  0.32% 88.14%      0.06s  1.92%  runtime.makeslice
+     0.01s  0.32% 88.46%      0.05s  1.60%  runtime.mallocgcSmallNoscan
+     0.01s  0.32% 88.78%      0.04s  1.28%  runtime.markroot
+     0.01s  0.32% 89.10%      0.02s  0.64%  runtime.typePointers.next
+     0.01s  0.32% 89.42%      0.03s  0.96%  runtime.unlock2
+     0.01s  0.32% 89.74%      0.04s  1.28%  strings.(*Builder).Grow
+     0.01s  0.32% 90.06%      0.02s  0.64%  strings.(*Builder).WriteString (inline)
+     0.01s  0.32% 90.38%      0.03s  0.96%  strings.(*Builder).grow
+     0.01s  0.32% 90.71%      0.05s  1.60%  strings.genSplit
+         0     0% 90.71%      1.40s 44.87%  archive/zip.(*checksumReader).Read
+         0     0% 90.71%      1.39s 44.55%  archive/zip.(*pooledFlateReader).Read
+         0     0% 90.71%      0.17s  5.45%  bufio.(*Reader).fill
+         0     0% 90.71%      0.02s  0.64%  bufio.ScanLines
+         0     0% 90.71%      0.02s  0.64%  bytes.IndexByte (inline)
+         0     0% 90.71%      1.39s 44.55%  compress/flate.(*decompressor).Read
+         0     0% 90.71%      0.24s  7.69%  compress/flate.(*decompressor).nextBlock
+         0     0% 90.71%      0.99s 31.73%  github.com/json-iterator/go.(*Iterator).ReadVal
+         0     0% 90.71%      1.05s 33.65%  github.com/json-iterator/go.(*frozenConfig).Unmarshal
+         0     0% 90.71%      0.05s  1.60%  github.com/json-iterator/go.(*frozenConfig).getDecoderFromCache
+         0     0% 90.71%      0.94s 30.13%  github.com/json-iterator/go.(*generalStructDecoder).Decode
+         0     0% 90.71%      0.30s  9.62%  github.com/json-iterator/go.(*stringCodec).Decode
+         0     0% 90.71%      2.78s 89.10%  github.com/popovv99/golang-hw/hw10_program_optimization.GetDomainStat
+         0     0% 90.71%      2.78s 89.10%  github.com/popovv99/golang-hw/hw10_program_optimization.TestGetDomainStat_Time_And_Memory.func1
+         0     0% 90.71%      0.02s  0.64%  internal/bytealg.MakeNoZero
+         0     0% 90.71%      0.17s  5.45%  internal/poll.(*FD).Pread
+         0     0% 90.71%      0.17s  5.45%  io.(*SectionReader).Read
+         0     0% 90.71%      0.17s  5.45%  os.(*File).ReadAt
+         0     0% 90.71%      0.17s  5.45%  os.(*File).pread (inline)
+         0     0% 90.71%      0.14s  4.49%  regexp.(*Regexp).MatchString (inline)
+         0     0% 90.71%      0.14s  4.49%  regexp.(*Regexp).doMatch (inline)
+         0     0% 90.71%      0.02s  0.64%  regexp.(*inputString).index
+         0     0% 90.71%      0.04s  1.28%  regexp.freeBitState
+         0     0% 90.71%      0.03s  0.96%  regexp.newBitState (inline)
+         0     0% 90.71%      0.09s  2.88%  runtime.(*gcControllerState).enlistWorker
+         0     0% 90.71%      0.09s  2.88%  runtime.(*gcWork).balance
+         0     0% 90.71%      0.02s  0.64%  runtime.(*mcache).nextFree
+         0     0% 90.71%      0.02s  0.64%  runtime.(*mcache).refill
+         0     0% 90.71%      0.02s  0.64%  runtime.(*mcentral).cacheSpan
+         0     0% 90.71%      0.03s  0.96%  runtime.findRunnable
+         0     0% 90.71%      0.02s  0.64%  runtime.forEachPInternal
+         0     0% 90.71%      0.13s  4.17%  runtime.gcBgMarkWorker
+         0     0% 90.71%      0.22s  7.05%  runtime.gcBgMarkWorker.func2
+         0     0% 90.71%      0.19s  6.09%  runtime.gcDrainMarkWorkerDedicated (inline)
+         0     0% 90.71%      0.03s  0.96%  runtime.gcDrainMarkWorkerIdle (inline)
+         0     0% 90.71%      0.02s  0.64%  runtime.gcMarkDone.forEachP.func5
+         0     0% 90.71%      0.02s  0.64%  runtime.gopreempt_m (inline)
+         0     0% 90.71%      0.02s  0.64%  runtime.goschedImpl
+         0     0% 90.71%      0.02s  0.64%  runtime.greyobject
+         0     0% 90.71%      0.04s  1.28%  runtime.lock (inline)
+         0     0% 90.71%      0.04s  1.28%  runtime.lock2
+         0     0% 90.71%      0.04s  1.28%  runtime.lockWithRank (inline)
+         0     0% 90.71%      0.02s  0.64%  runtime.mallocgcLarge
+         0     0% 90.71%      0.02s  0.64%  runtime.markroot.func1
+         0     0% 90.71%      0.04s  1.28%  runtime.mcall
+         0     0% 90.71%      0.02s  0.64%  runtime.memclrNoHeapPointersChunked
+         0     0% 90.71%      0.02s  0.64%  runtime.morestack
+         0     0% 90.71%      0.05s  1.60%  runtime.newobject
+         0     0% 90.71%      0.02s  0.64%  runtime.newstack
+         0     0% 90.71%      0.02s  0.64%  runtime.osyield (inline)
+         0     0% 90.71%      0.04s  1.28%  runtime.park_m
+         0     0% 90.71%      0.10s  3.21%  runtime.preemptM
+         0     0% 90.71%      0.10s  3.21%  runtime.preemptone
+         0     0% 90.71%      0.02s  0.64%  runtime.scanstack
+         0     0% 90.71%      0.04s  1.28%  runtime.schedule
+         0     0% 90.71%      0.02s  0.64%  runtime.semasleep
+         0     0% 90.71%      0.03s  0.96%  runtime.semawakeup
+         0     0% 90.71%      0.18s  5.77%  runtime.syscall_syscalln
+         0     0% 90.71%      0.28s  8.97%  runtime.systemstack
+         0     0% 90.71%      0.03s  0.96%  runtime.unlock (inline)
+         0     0% 90.71%      0.02s  0.64%  runtime.unlock2Wake
+         0     0% 90.71%      0.03s  0.96%  runtime.unlockWithRank (inline)
+         0     0% 90.71%      0.02s  0.64%  strings.Index (inline)
+         0     0% 90.71%      0.05s  1.60%  strings.SplitN (inline)
+         0     0% 90.71%      0.05s  1.60%  sync.(*Map).Load (inline)
+         0     0% 90.71%      0.11s  3.53%  syscall.ReadFile (inline)
+         0     0% 90.71%      0.06s  1.92%  syscall.Seek
+         0     0% 90.71%      0.17s  5.45%  syscall.Syscall6
+         0     0% 90.71%      0.11s  3.53%  syscall.readFile
+         0     0% 90.71%      0.06s  1.92%  syscall.setFilePointerEx
+         0     0% 90.71%      2.60s 83.33%  testing.(*B).launch
+         0     0% 90.71%      0.18s  5.77%  testing.(*B).run1.func1
+         0     0% 90.71%      2.78s 89.10%  testing.(*B).runN
