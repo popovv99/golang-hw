@@ -1,17 +1,22 @@
 ifeq ($(OS),Windows_NT)
 	EXT := .exe
+	SHELL := cmd.exe
 else
 	EXT :=
+	SHELL := /bin/sh
 endif
 
 BIN_CALENDAR := "./bin/calendar$(EXT)"
 BIN_SCHEDULER := "./bin/calendar_scheduler$(EXT)"
 BIN_STORER := "./bin/calendar_storer$(EXT)"
-DOCKER_IMG="calendar:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 BUILD_DATE := $(shell git log -1 --format="%cI")
 LDFLAGS := -X main.release=develop -X main.buildDate=$(BUILD_DATE) -X main.gitHash=$(GIT_HASH)
+
+DOCKER_COMPOSE ?= docker compose
+COMPOSE_FILE ?= deployments/docker-compose.yaml
+COMPOSE_TEST_FILE ?= deployments/docker-compose.test.yaml
 
 build: build-calendar build-scheduler build-storer
 
@@ -24,17 +29,19 @@ build-scheduler:
 build-storer:
 	go build -v -o $(BIN_STORER) -ldflags "$(LDFLAGS)" ./cmd/calendar_storer
 
+build-images:
+	docker build --build-arg APP=calendar --build-arg CONFIG=configs/calendar_config.template.toml --build-arg LDFLAGS="$(LDFLAGS)" -t calendar:develop -f build/Dockerfile .
+	docker build --build-arg APP=calendar_scheduler --build-arg CONFIG=configs/scheduler_config.template.toml --build-arg LDFLAGS="$(LDFLAGS)" -t calendar-scheduler:develop -f build/Dockerfile .
+	docker build --build-arg APP=calendar_storer --build-arg CONFIG=configs/storer_config.template.toml --build-arg LDFLAGS="$(LDFLAGS)" -t calendar-storer:develop -f build/Dockerfile .
+
 run: build-calendar
 	$(BIN_CALENDAR) --config ./configs/calendar_config.toml
 
-build-img:
-	docker build \
-		--build-arg=LDFLAGS="$(LDFLAGS)" \
-		-t $(DOCKER_IMG) \
-		-f build/Dockerfile .
+up:
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d
 
-run-img: build-img
-	docker run $(DOCKER_IMG)
+down:
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down --remove-orphans
 
 version: build-calendar
 	$(BIN_CALENDAR) version
@@ -51,10 +58,20 @@ lint:
 
 migrate-up:
 	@echo "Apply migrations manually using goose or psql"
-	@echo "Example: goose -dir migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" up"
+	@echo "Example: goose -dir database/migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" up"
 
 migrate-down:
 	@echo "Rollback migrations manually using goose or psql"
-	@echo "Example: goose -dir migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" down"
+	@echo "Example: goose -dir database/migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" down"
 
-.PHONY: build build-calendar build-scheduler build-storer run build-img run-img version test generate lint migrate-up migrate-down
+integration-tests: build-images
+ifeq ($(OS),Windows_NT)
+	scripts\run-integration-tests.bat
+else
+	@$(DOCKER_COMPOSE) -f $(COMPOSE_TEST_FILE) run --rm tests; \
+	RESULT=$$?; \
+	$(DOCKER_COMPOSE) -f $(COMPOSE_TEST_FILE) down -v; \
+	exit $$RESULT
+endif
+
+.PHONY: build build-calendar build-scheduler build-storer build-images run up down version test generate lint migrate-up migrate-down integration-tests

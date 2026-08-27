@@ -1,0 +1,22 @@
+[logger]
+level = "${LOGGER_LEVEL}"
+
+[storage]
+type = "${STORAGE_TYPE}"
+
+[storage.database]
+host = "${DB_HOST}"
+port = "${DB_PORT}"
+user = "${DB_USER}"
+password = "${DB_PASSWORD}"
+name = "${DB_NAME}"
+schema = "${DB_SCHEMA}"
+
+[kafka]
+brokers = [ "${KAFKA_BROKERS}" ]
+topic = "${KAFKA_TOPIC}"
+retry = ${KAFKA_RETRY}
+timeout = "${KAFKA_TIMEOUT}"
+
+[scheduler]
+interval = "${SCHEDULER_INTERVAL}"
