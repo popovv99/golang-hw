@@ -28,4 +28,11 @@ type Storage interface {
 	ListEventsDay(ctx context.Context, date time.Time) ([]Event, error)
 	ListEventsWeek(ctx context.Context, startDate time.Time) ([]Event, error)
 	ListEventsMonth(ctx context.Context, startDate time.Time) ([]Event, error)
+
+	// События, по которым наступило время отправки уведомления.
+	ListEventsForNotification(ctx context.Context, now time.Time) ([]Event, error)
+	// Удаление событий старше заданной даты.
+	DeleteOldEvents(ctx context.Context, before time.Time) error
+	// Сохранение уведомления, полученного из очереди.
+	CreateNotification(ctx context.Context, notification Notification) error
 }

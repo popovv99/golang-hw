@@ -1,14 +1,31 @@
-BIN := "./bin/calendar"
+ifeq ($(OS),Windows_NT)
+	EXT := .exe
+else
+	EXT :=
+endif
+
+BIN_CALENDAR := "./bin/calendar$(EXT)"
+BIN_SCHEDULER := "./bin/calendar_scheduler$(EXT)"
+BIN_STORER := "./bin/calendar_storer$(EXT)"
 DOCKER_IMG="calendar:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
-LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
+BUILD_DATE := $(shell git log -1 --format="%cI")
+LDFLAGS := -X main.release=develop -X main.buildDate=$(BUILD_DATE) -X main.gitHash=$(GIT_HASH)
 
-build:
-	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/calendar
+build: build-calendar build-scheduler build-storer
 
-run: build
-	$(BIN) --config ./configs/config.toml
+build-calendar:
+	go build -v -o $(BIN_CALENDAR) -ldflags "$(LDFLAGS)" ./cmd/calendar
+
+build-scheduler:
+	go build -v -o $(BIN_SCHEDULER) -ldflags "$(LDFLAGS)" ./cmd/calendar_scheduler
+
+build-storer:
+	go build -v -o $(BIN_STORER) -ldflags "$(LDFLAGS)" ./cmd/calendar_storer
+
+run: build-calendar
+	$(BIN_CALENDAR) --config ./configs/calendar_config.toml
 
 build-img:
 	docker build \
@@ -19,8 +36,8 @@ build-img:
 run-img: build-img
 	docker run $(DOCKER_IMG)
 
-version: build
-	$(BIN) version
+version: build-calendar
+	$(BIN_CALENDAR) version
 
 test:
 	go test -race ./internal/...
@@ -40,4 +57,4 @@ migrate-down:
 	@echo "Rollback migrations manually using goose or psql"
 	@echo "Example: goose -dir migrations postgres \"user=calendar password=calendar dbname=calendar host=localhost port=5432 sslmode=disable\" down"
 
-.PHONY: build run build-img run-img version test generate lint migrate-up migrate-down
+.PHONY: build build-calendar build-scheduler build-storer run build-img run-img version test generate lint migrate-up migrate-down
