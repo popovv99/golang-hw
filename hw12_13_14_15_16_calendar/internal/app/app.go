@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/metrics"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/model"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/server/http/api"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
@@ -31,6 +32,7 @@ func (a *App) CreateEvent(ctx context.Context, event api.EventRequest) (api.Even
 		return api.EventResponse{}, err
 	}
 
+	metrics.Default().IncEventsCreated()
 	return model.StorageToEventResponse(storageEvent), nil
 }
 
@@ -41,11 +43,17 @@ func (a *App) UpdateEvent(ctx context.Context, id string, event api.EventRequest
 		return api.EventResponse{}, err
 	}
 
+	metrics.Default().IncEventsUpdated()
 	return model.StorageToEventResponse(storageEvent), nil
 }
 
 func (a *App) DeleteEvent(ctx context.Context, id string) error {
-	return a.storage.DeleteEvent(ctx, id)
+	if err := a.storage.DeleteEvent(ctx, id); err != nil {
+		return err
+	}
+
+	metrics.Default().IncEventsDeleted()
+	return nil
 }
 
 func (a *App) ListEventsDay(ctx context.Context, date time.Time) ([]api.EventResponse, error) {
