@@ -130,8 +130,10 @@ func (m *mockApp) ListEventsWeek(ctx context.Context, date time.Time) ([]api.Eve
 
 func (m *mockApp) ListEventsMonth(ctx context.Context, date time.Time) ([]api.EventResponse, error) {
 	var result []api.EventResponse
+	monthStart := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
+	monthEnd := monthStart.AddDate(0, 1, 0)
 	for _, event := range m.events {
-		if event.Date.Year() == date.Year() && event.Date.Month() == date.Month() {
+		if (event.Date.Equal(monthStart) || event.Date.After(monthStart)) && event.Date.Before(monthEnd) {
 			parsedUUID := uuid.MustParse(event.ID)
 			uuidPtr := types.UUID(parsedUUID)
 			parsedUserID := uuid.MustParse(event.UserID)

@@ -1,0 +1,17 @@
+[logger]
+level = "${LOGGER_LEVEL}"
+
+[storage]
+type = "${STORAGE_TYPE}"
+
+[storage.database]
+host = "${DB_HOST}"
+port = "${DB_PORT}"
+user = "${DB_USER}"
+password = "${DB_PASSWORD}"
+name = "${DB_NAME}"
+schema = "${DB_SCHEMA}"
+
+[server]
+host = "${SERVER_HOST}"
+port = "${SERVER_PORT}"
