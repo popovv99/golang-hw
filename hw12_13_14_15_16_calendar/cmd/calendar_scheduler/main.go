@@ -4,14 +4,18 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/config"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/kafka"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/metrics"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
 	memorystorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/memory"
 	sqlstorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/sql"
@@ -80,6 +84,17 @@ func main() {
 
 	logg.Info("calendar scheduler is running...")
 
+	go func() {
+		metricsAddr := os.Getenv("METRICS_ADDR")
+		if metricsAddr == "" {
+			metricsAddr = ":8081"
+		}
+		logg.Info("metrics server is starting on " + metricsAddr)
+		if err := http.ListenAndServe(metricsAddr, promhttp.Handler()); err != nil {
+			logg.Error("metrics server failed: " + err.Error())
+		}
+	}()
+
 	ticker := time.NewTicker(schedulerInterval)
 	defer ticker.Stop()
 
@@ -114,7 +129,16 @@ func newStorage(cfg config.StorageConf, logg logger.Logger) (storage.Storage, fu
 	}
 }
 
-func process(ctx context.Context, eventStorage storage.Storage, producer kafka.Producer, logg logger.Logger) error {
+func process(ctx context.Context, eventStorage storage.Storage, producer kafka.Producer, logg logger.Logger) (err error) {
+	metrics.Default().IncSchedulerRuns()
+	defer func() {
+		if err != nil {
+			metrics.Default().IncSchedulerErrors()
+		} else {
+			metrics.Default().SetSchedulerLastSuccess(time.Now())
+		}
+	}()
+
 	now := time.Now()
 
 	events, err := eventStorage.ListEventsForNotification(ctx, now)
@@ -132,9 +156,11 @@ func process(ctx context.Context, eventStorage storage.Storage, producer kafka.P
 
 		if err := producer.Send(ctx, notification); err != nil {
 			logg.Error("failed to send notification: " + err.Error())
+			metrics.Default().IncNotificationsSent("error")
 			continue
 		}
 
+		metrics.Default().IncNotificationsSent("success")
 		logg.Info("notification sent for event: " + event.ID)
 	}
 

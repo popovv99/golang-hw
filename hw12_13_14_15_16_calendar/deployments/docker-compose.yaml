@@ -89,6 +89,8 @@ services:
   scheduler:
     image: calendar-scheduler:develop
     container_name: calendar-scheduler
+    ports:
+      - "8081:8081"
     environment:
       LOGGER_LEVEL: info
       STORAGE_TYPE: sql
@@ -103,6 +105,7 @@ services:
       KAFKA_RETRY: 30
       KAFKA_TIMEOUT: 10s
       SCHEDULER_INTERVAL: 1m
+      METRICS_ADDR: :8081
     depends_on:
       migrations:
         condition: service_completed_successfully
@@ -113,6 +116,8 @@ services:
   storer:
     image: calendar-storer:develop
     container_name: calendar-storer
+    ports:
+      - "8082:8082"
     environment:
       LOGGER_LEVEL: info
       STORAGE_TYPE: sql
@@ -127,6 +132,7 @@ services:
       KAFKA_GROUP_ID: storer
       KAFKA_RETRY: 30
       KAFKA_TIMEOUT: 10s
+      METRICS_ADDR: :8082
     depends_on:
       migrations:
         condition: service_completed_successfully
@@ -134,5 +140,25 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: calendar-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    depends_on:
+      - calendar
+      - scheduler
+      - storer
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  prometheus_data:

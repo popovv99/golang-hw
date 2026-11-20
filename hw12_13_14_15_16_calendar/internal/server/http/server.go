@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime/types"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/server/http/api"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
@@ -41,6 +42,9 @@ func NewServer(eventLogger logger.Logger, app Application) *Server {
 func (s *Server) Start(ctx context.Context, host, port string) error {
 	mux := chi.NewRouter()
 
+	// Middleware логирования/метрик внутри chi-роутера, чтобы иметь доступ к r.Pattern
+	mux.Use(loggingMiddleware(s.logger))
+
 	// Регистрируем сгенерированные хендлеры
 	handler := &handler{
 		app:    s.app,
@@ -49,15 +53,15 @@ func (s *Server) Start(ctx context.Context, host, port string) error {
 
 	apiHandler := api.HandlerFromMux(handler, mux)
 
-	// Оборачиваем в middleware для логирования
-	loggingHandler := loggingMiddleware(apiHandler, s.logger)
+	// Prometheus metrics endpoint
+	mux.Handle("/metrics", promhttp.Handler())
 
 	addr := net.JoinHostPort(host, port)
 	s.logger.Info(fmt.Sprintf("server is starting on %s", addr))
 
 	s.server = &http.Server{
 		Addr:    addr,
-		Handler: loggingHandler,
+		Handler: apiHandler,
 	}
 
 	errCh := make(chan error, 1)

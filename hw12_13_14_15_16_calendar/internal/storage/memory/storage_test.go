@@ -142,24 +142,22 @@ func TestListEventsDay(t *testing.T) {
 	}
 }
 
-func testListEvents(t *testing.T, s *Storage, listFunc func(context.Context, time.Time) ([]storage.Event, error), event2Offset, event2Duration time.Duration, expectedCount int) {
+func testListEvents(t *testing.T, s *Storage, listFunc func(context.Context, time.Time) ([]storage.Event, error), ref time.Time, event2Offset time.Duration, expectedCount int) {
 	ctx := context.Background()
-
-	now := time.Now()
 
 	event1 := storage.Event{
 		ID:      uuid.New().String(),
 		Title:   "Event 1",
-		Date:    now.Add(2 * time.Hour),
-		EndDate: now.Add(3 * time.Hour),
+		Date:    ref.Add(2 * time.Hour),
+		EndDate: ref.Add(3 * time.Hour),
 		UserID:  "user1",
 	}
 
 	event2 := storage.Event{
 		ID:      uuid.New().String(),
 		Title:   "Event 2",
-		Date:    now.Add(event2Offset),
-		EndDate: now.Add(event2Duration),
+		Date:    ref.Add(event2Offset),
+		EndDate: ref.Add(event2Offset + 1 * time.Hour),
 		UserID:  "user1",
 	}
 
@@ -170,7 +168,7 @@ func testListEvents(t *testing.T, s *Storage, listFunc func(context.Context, tim
 		t.Fatalf("failed to create event2: %v", err)
 	}
 
-	events, err := listFunc(ctx, now)
+	events, err := listFunc(ctx, ref)
 	if err != nil {
 		t.Fatalf("failed to list events: %v", err)
 	}
@@ -182,12 +180,16 @@ func testListEvents(t *testing.T, s *Storage, listFunc func(context.Context, tim
 
 func TestListEventsWeek(t *testing.T) {
 	s := New()
-	testListEvents(t, s, s.ListEventsWeek, 3*24*time.Hour, 73*time.Hour, 2)
+	// Фиксированная дата: понедельник в середине месяца, event2 через 3 дня — точно в пределах недели.
+	ref := time.Date(2025, 1, 15, 12, 0, 0, 0, time.UTC)
+	testListEvents(t, s, s.ListEventsWeek, ref, 3*24*time.Hour, 2)
 }
 
 func TestListEventsMonth(t *testing.T) {
 	s := New()
-	testListEvents(t, s, s.ListEventsMonth, 15*24*time.Hour, 361*time.Hour, 2)
+	// Фиксированная дата: середина месяца, event2 через 15 дней — точно в пределах того же месяца.
+	ref := time.Date(2025, 1, 15, 12, 0, 0, 0, time.UTC)
+	testListEvents(t, s, s.ListEventsMonth, ref, 15*24*time.Hour, 2)
 }
 
 func TestConcurrentAccess(t *testing.T) {

@@ -479,3 +479,50 @@ func TestIntegrationMethodNotAllowed(t *testing.T) {
 		t.Errorf("expected status %d for method not allowed, got %d", http.StatusMethodNotAllowed, resp.StatusCode)
 	}
 }
+
+// TestMetricPathPattern проверяет, что chi устанавливает r.Pattern для параметризованных
+// маршрутов (например /events/{id}), чтобы метрики не раздувались cardinality UUID-ами.
+func TestMetricPathPattern(t *testing.T) {
+	var capturedPattern string
+
+	mux := chi.NewRouter()
+	mux.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			next.ServeHTTP(w, r)
+			capturedPattern = r.Pattern
+		})
+	})
+
+	app := newMockApp()
+	handler := &handler{app: app, logger: nil}
+	_ = api.HandlerFromMux(handler, mux)
+
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	id := uuid.New()
+	userID := uuid.New()
+	app.events[id.String()] = storage.Event{
+		ID:      id.String(),
+		Title:   "Test",
+		Date:    time.Now().Add(1 * time.Hour),
+		EndDate: time.Now().Add(2 * time.Hour),
+		UserID:  userID.String(),
+	}
+
+	req, _ := http.NewRequest(http.MethodDelete, server.URL+"/events/"+id.String(), nil)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("failed to send request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("expected status %d, got %d", http.StatusNoContent, resp.StatusCode)
+	}
+
+	if capturedPattern != "/events/{id}" {
+		t.Errorf("expected r.Pattern = %q, got %q", "/events/{id}", capturedPattern)
+	}
+}

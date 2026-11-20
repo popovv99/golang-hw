@@ -4,14 +4,18 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/config"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/kafka"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/logger"
+	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/metrics"
 	"github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage"
 	memorystorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/memory"
 	sqlstorage "github.com/popovv99/golang-hw/hw12_13_14_15_16_calendar/internal/storage/sql"
@@ -74,6 +78,17 @@ func main() {
 
 	logg.Info("calendar storer is running...")
 
+	go func() {
+		metricsAddr := os.Getenv("METRICS_ADDR")
+		if metricsAddr == "" {
+			metricsAddr = ":8082"
+		}
+		logg.Info("metrics server is starting on " + metricsAddr)
+		if err := http.ListenAndServe(metricsAddr, promhttp.Handler()); err != nil {
+			logg.Error("metrics server failed: " + err.Error())
+		}
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -81,20 +96,27 @@ func main() {
 		default:
 		}
 
+		metrics.Default().IncStorerRuns()
+
 		notification, err := consumer.Read(ctx)
 		if err != nil {
 			if ctx.Err() != nil {
 				return
 			}
 			logg.Error("failed to read message: " + err.Error())
+			metrics.Default().IncStorerErrors()
 			continue
 		}
 
 		if err := eventStorage.CreateNotification(ctx, notification); err != nil {
 			logg.Error("failed to save notification: " + err.Error())
+			metrics.Default().IncStorerErrors()
+			metrics.Default().IncNotificationsSaved("error")
 			continue
 		}
 
+		metrics.Default().IncNotificationsSaved("success")
+		metrics.Default().SetStorerLastSuccess(time.Now())
 		logg.Info("notification saved for event: " + notification.EventID)
 	}
 }
